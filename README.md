@@ -1,2 +1,3 @@
 # diskRef
-use c in macos check disk
+compile:
+    gcc -framework DiskArbitration -framework CoreFoundation diskRef.c -o diskRef
