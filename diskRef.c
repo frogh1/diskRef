@@ -8,6 +8,23 @@
 #include <DiskArbitration/DASession.h>
 #include <DiskArbitration/DiskArbitration.h>
 
+int printDictionaryAsXML(CFDictionaryRef dict)
+{
+
+    CFErrorRef error;
+    CFDataRef xml = CFPropertyListCreateData(kCFAllocatorDefault,dict,kCFPropertyListXMLFormat_v1_0,0,&error);
+    if (!xml) 
+    {
+        printf("Failed to get XML error: %s\n",CFStringGetCStringPtr(CFErrorCopyFailureReason(error),kCFStringEncodingASCII));
+        return -1;
+    }
+
+    write(STDOUT_FILENO, CFDataGetBytePtr(xml), CFDataGetLength(xml));
+    CFRelease(xml);
+
+    return 0;
+}
+
 void handledisk(DADiskRef disk)
 {
     const char *name =  DADiskGetBSDName(disk);
@@ -25,7 +42,12 @@ void diskAppearedCallback(DADiskRef disk, void *context)
         printf("disk description is null\n");
         goto done;
     }
+
+    //CFShow(description);
+    printDictionaryAsXML(description);
+
     const char  *diskname =  DADiskGetBSDName(disk);
+
     if (CFDictionaryContainsKey(description,CFSTR("DADeviceProtocol")))
     {
         ref = CFDictionaryGetValue(description, CFSTR("DADeviceProtocol"));
