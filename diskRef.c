@@ -10,12 +10,16 @@
 
 int printDictionaryAsXML(CFDictionaryRef dict)
 {
+    CFStringRef failureReason;
+    CFErrorRef error = NULL;
 
-    CFErrorRef error;
     CFDataRef xml = CFPropertyListCreateData(kCFAllocatorDefault,dict,kCFPropertyListXMLFormat_v1_0,0,&error);
-    if (!xml) 
+    if (!xml && error) 
     {
-        printf("Failed to get XML error: %s\n",CFStringGetCStringPtr(CFErrorCopyFailureReason(error),kCFStringEncodingASCII));
+        failureReason = CFErrorCopyFailureReason(error);
+        printf("Failed to get XML error: %s\n",CFStringGetCStringPtr(failureReason,kCFStringEncodingASCII));
+        CFRelease(failureReason);
+        CFRelease(error);
         return -1;
     }
 
@@ -24,7 +28,6 @@ int printDictionaryAsXML(CFDictionaryRef dict)
 
     return 0;
 }
-
 void handledisk(DADiskRef disk)
 {
     const char *name =  DADiskGetBSDName(disk);
