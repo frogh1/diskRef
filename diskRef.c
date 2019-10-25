@@ -18,7 +18,7 @@ int printDictionaryAsXML(CFDictionaryRef dict)
     {
         failureReason = CFErrorCopyFailureReason(error);
         printf("Failed to get XML error: %s\n",CFStringGetCStringPtr(failureReason,kCFStringEncodingASCII));
-        CFRelease(failureReason);
+        if(failureReason) CFRelease(failureReason);
         CFRelease(error);
         return -1;
     }
